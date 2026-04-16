@@ -8,6 +8,7 @@ import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import CatalogPage from './pages/CatalogPage';
 import CategoryPage from './pages/CategoryPage';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   const cart = useCart();
@@ -55,6 +56,7 @@ function App() {
             />
           }
         />
+        <Route path="/nosotros" element={<AboutPage />} />
       </Routes>
 
       <CartSidebar

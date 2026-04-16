@@ -67,6 +67,9 @@ export default function CartSidebar({
                       <img src={item.image} alt={item.name} className="cart-item__img" />
                       <div className="cart-item__info">
                         <div className="cart-item__name">{item.name}</div>
+                        {item.sku && (
+                          <div className="cart-item__sku">Cod: {item.sku}</div>
+                        )}
                         <div className="cart-item__price">
                           RD$ {(item.price * item.qty).toLocaleString('es-DO', { minimumFractionDigits: 2 })}
                         </div>

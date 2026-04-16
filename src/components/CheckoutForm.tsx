@@ -41,6 +41,7 @@ export default function CheckoutForm({ items, totalPrice, onOrderSent }: Checkou
       const num = String(i + 1).padStart(2, '0');
       const subtotal = (item.price * item.qty).toFixed(2);
       msg += `   ${num}. ${item.name}\n`;
+      if (item.sku) msg += `         Cod: \`${item.sku}\`\n`;
       msg += `         ${item.qty} x RD$${item.price.toFixed(2)} = *RD$${subtotal}*\n\n`;
     });
 

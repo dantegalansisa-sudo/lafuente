@@ -65,6 +65,12 @@ export default function Navbar({ searchQuery, onSearchChange, totalItems, onCart
             {categoryDisplayNames[cat] || cat}
           </Link>
         ))}
+        <Link
+          to="/nosotros"
+          className={`cat-navbar-item ${location.pathname === '/nosotros' ? 'active' : ''}`}
+        >
+          Nosotros
+        </Link>
       </div>
     </>
   );

@@ -48,6 +48,14 @@ export default function ProductCard({ product, qty, onAdd, onUpdateQty }: Produc
 
       <div className="product-card__body">
         <div className="product-card__name">{product.name}</div>
+        {product.sku && (
+          <div className="product-card__sku" title="Codigo de barras">
+            <svg className="product-card__sku-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14" />
+            </svg>
+            <span className="product-card__sku-code">{product.sku}</span>
+          </div>
+        )}
         <div className="product-card__price">RD$ {product.price.toLocaleString('es-DO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
 
         {qty === 0 ? (

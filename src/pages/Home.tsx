@@ -228,18 +228,38 @@ export default function Home({ getItemQty, onAdd, onUpdateQty }: HomeProps) {
       <footer className="footer">
         <div className="footer__grid">
           <div className="footer__brand">
-            <h3><img src="/logo-lafuente.jpeg" alt="La Fuente" style={{ height: 50, borderRadius: 6, marginBottom: 8 }} /> La Fuente Supermarket</h3>
-            <p>Tu supermercado de confianza. Delivery y Pick-up disponible para tu comodidad.</p>
+            <h3>
+              <img src="/logo-lafuente.jpeg" alt="La Fuente" style={{ height: 50, borderRadius: 6, marginBottom: 8 }} />
+              {' '}La Fuente Supermarket
+            </h3>
+            <p>El aliado a tu despensa siempre. Supermercado, licorera y hogar en Villa Mella.</p>
           </div>
           <div className="footer__col">
             <h4>Navegacion</h4>
             <Link to="/">Inicio</Link>
             <Link to="/catalogo">Catalogo</Link>
+            <Link to="/nosotros">Nosotros</Link>
             <a href="https://wa.me/18095933919" target="_blank" rel="noopener noreferrer">Contacto</a>
           </div>
           <div className="footer__col">
             <h4>Contacto</h4>
-            <a href="https://wa.me/18095933919" target="_blank" rel="noopener noreferrer">WhatsApp: 809-593-3919</a>
+            <a href="tel:+18095933919">Tel: 809-593-3919</a>
+            <a href="tel:+18298740312">Tel: 829-874-0312</a>
+            <a href="https://wa.me/18095933919" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a href="https://instagram.com/lafuentesupermarketrd" target="_blank" rel="noopener noreferrer">Instagram @lafuentesupermarketrd</a>
+          </div>
+          <div className="footer__col">
+            <h4>Ubicacion</h4>
+            <a
+              href="https://maps.google.com/?q=Carretera+Yamasa+Villa+Mella+Santo+Domingo"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Carretera Yamasa, local 26
+            </a>
+            <span>al lado de Stop Out Car Wash</span>
+            <span>Villa Mella, Santo Domingo</span>
+            <span>Republica Dominicana 11201</span>
           </div>
         </div>
         <div className="footer__bottom">
