@@ -323,112 +323,109 @@ input, textarea, select {
   flex-wrap: wrap;
 }
 
-/* Hero Showcase - Two columns */
+/* Hero Showcase - Horizontal Slider */
 .hero__showcase {
   flex: 1;
-  max-width: 620px;
-  display: flex;
-  gap: 20px;
-  padding: 20px 0;
-}
-
-/* Carousel column */
-.hero__carousel {
-  flex: 1;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  padding: 20px 0;
 }
 
-.hero__carousel-label {
+.hero__slider-category {
   font-size: 11px;
   font-weight: 700;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.5);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 
-.hero__carousel-viewport {
+.hero__slider-viewport {
   width: 100%;
-  height: 480px;
+  max-width: 420px;
+  aspect-ratio: 1;
   overflow: hidden;
   border-radius: 24px;
   position: relative;
 }
 
-.hero__carousel-track {
+.hero__slider-slide {
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  animation: scrollBeverages 10s linear infinite;
-}
-
-@keyframes scrollBeverages {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
-}
-
-.hero__carousel-track:hover {
-  animation-play-state: paused;
-}
-
-.hero__carousel-slide {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 20px 12px;
-  min-height: 480px;
 }
 
-.hero__carousel-img {
+.hero__slider-img {
   width: 100%;
-  max-width: 380px;
-  height: 400px;
+  height: 100%;
   object-fit: contain;
   background: white;
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  transition: transform 0.4s ease;
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
 }
 
-.hero__carousel-slide:hover .hero__carousel-img {
-  transform: scale(1.06);
-}
-
-.hero__carousel-name {
-  font-size: 12px;
+.hero__slider-name {
+  font-size: 16px;
   font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  text-align: center;
+  color: rgba(255,255,255,0.95);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1.3;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
-/* Food / Canasta carousel */
-.hero__carousel-track--food {
-  animation: scrollCanasta 25s linear infinite;
+.hero__slider-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-@keyframes scrollCanasta {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-50%); }
+.hero__slider-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
 }
 
-.hero__carousel-slide--food {
-  min-height: 240px;
-  padding: 10px 12px;
-  gap: 8px;
+.hero__slider-btn:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.6);
+  transform: scale(1.1);
 }
 
-.hero__carousel-img--food {
-  max-width: 200px;
-  height: 180px;
-  padding: 12px;
-  border-radius: 16px;
+.hero__slider-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.hero__slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.hero__slider-dot.active {
+  background: white;
+  width: 24px;
+  border-radius: 4px;
 }
 
 .btn {
@@ -1378,33 +1375,36 @@ input, textarea, select {
     gap: 12px;
   }
 
-  .hero__carousel-viewport {
-    height: 360px;
+  .hero__showcase {
+    max-width: 100%;
+  }
+
+  .hero__slider-viewport {
+    max-width: 300px;
     border-radius: 18px;
   }
 
-  .hero__carousel-slide {
-    min-height: 360px;
-    padding: 16px 8px;
+  .hero__slider-img {
+    border-radius: 18px;
+    padding: 14px;
   }
 
-  .hero__carousel-img {
-    max-width: 240px;
-    height: 280px;
+  .hero__slider-name {
+    font-size: 13px;
   }
 
-  .hero__carousel-name {
-    font-size: 10px;
+  .hero__slider-btn {
+    width: 34px;
+    height: 34px;
   }
 
-  .hero__carousel-slide--food {
-    min-height: 200px;
-    padding: 8px 6px;
+  .hero__slider-dot {
+    width: 6px;
+    height: 6px;
   }
 
-  .hero__carousel-img--food {
-    max-width: 160px;
-    height: 150px;
+  .hero__slider-dot.active {
+    width: 18px;
   }
 
   .section {
