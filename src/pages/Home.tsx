@@ -12,6 +12,21 @@ const beverageProducts = [
   { src: '/imagenes/cervezas.png', name: 'Cervezas' },
 ];
 
+const canastaProducts = [
+  { src: '/imagenes/canasta/arroz.png', name: 'Arroz' },
+  { src: '/imagenes/canasta/habichuelas.png', name: 'Habichuelas' },
+  { src: '/imagenes/canasta/pollo.png', name: 'Pollo' },
+  { src: '/imagenes/canasta/platanos.png', name: 'Plátanos' },
+  { src: '/imagenes/canasta/huevos.png', name: 'Huevos' },
+  { src: '/imagenes/canasta/leche.png', name: 'Leche' },
+  { src: '/imagenes/canasta/aceite.png', name: 'Aceite' },
+  { src: '/imagenes/canasta/azucar.png', name: 'Azúcar' },
+  { src: '/imagenes/canasta/cafe.png', name: 'Café' },
+  { src: '/imagenes/canasta/salami.png', name: 'Salami' },
+  { src: '/imagenes/canasta/pan.png', name: 'Pan' },
+  { src: '/imagenes/canasta/vegetales.png', name: 'Vegetales' },
+];
+
 interface HomeProps {
   getItemQty: (id: string) => number;
   onAdd: (product: Product) => void;
@@ -136,13 +151,21 @@ export default function Home({ getItemQty, onAdd, onUpdateQty }: HomeProps) {
               </div>
             </div>
 
-            {/* Comida - placeholder */}
+            {/* Canasta Basica - Vertical carousel */}
             <div className="hero__carousel hero__carousel--food">
               <span className="hero__carousel-label">Canasta Basica</span>
               <div className="hero__carousel-viewport">
-                <div className="hero__food-placeholder">
-                  <img src="/logo-lafuente.jpeg" alt="La Fuente" className="hero__food-logo" />
-                  <span className="hero__food-text">Proximamente</span>
+                <div className="hero__carousel-track hero__carousel-track--food">
+                  {[...canastaProducts, ...canastaProducts].map((item, i) => (
+                    <div key={i} className="hero__carousel-slide hero__carousel-slide--food">
+                      <img
+                        src={item.src}
+                        alt={item.name}
+                        className="hero__carousel-img hero__carousel-img--food"
+                      />
+                      <span className="hero__carousel-name">{item.name}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
