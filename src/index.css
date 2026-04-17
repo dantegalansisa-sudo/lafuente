@@ -131,6 +131,30 @@ input, textarea, select {
   color: var(--text-muted);
 }
 
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar__social {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  transition: background 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+
+.navbar__social:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+}
+
 .navbar__cart {
   display: flex;
   align-items: center;
@@ -145,6 +169,7 @@ input, textarea, select {
   border: none;
   white-space: nowrap;
   transition: background 0.2s, transform 0.2s;
+  margin-left: 4px;
 }
 
 .navbar__cart:hover {
@@ -828,6 +853,28 @@ input, textarea, select {
   font-size: 24px;
   font-weight: 800;
   color: var(--red);
+}
+
+.cart-sidebar__section-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 4px;
+}
+
+.cart-sidebar__section-title span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.cart-sidebar__section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 .cart-empty {

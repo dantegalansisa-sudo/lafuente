@@ -95,6 +95,12 @@ export default function CartSidebar({
                   </div>
                 </div>
 
+                <div className="cart-sidebar__section-title">
+                  <div className="cart-sidebar__section-line" />
+                  <span>Datos personales</span>
+                  <div className="cart-sidebar__section-line" />
+                </div>
+
                 <CheckoutForm
                   items={items}
                   totalPrice={totalPrice}
