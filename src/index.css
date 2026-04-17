@@ -354,23 +354,7 @@ input, textarea, select {
   height: 480px;
   overflow: hidden;
   border-radius: 24px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
   position: relative;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 12%,
-    black 88%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 12%,
-    black 88%,
-    transparent 100%
-  );
 }
 
 .hero__carousel-track {
@@ -400,13 +384,13 @@ input, textarea, select {
 
 .hero__carousel-img {
   width: 100%;
-  max-width: 340px;
-  height: 380px;
+  max-width: 380px;
+  height: 400px;
   object-fit: contain;
   background: white;
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
   transition: transform 0.4s ease;
 }
 
