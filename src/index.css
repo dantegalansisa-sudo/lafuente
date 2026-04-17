@@ -235,10 +235,10 @@ input, textarea, select {
 /* ===== HERO ===== */
 .hero {
   background: linear-gradient(135deg, var(--red-dark) 0%, var(--red) 50%, var(--red-mid) 100%);
-  padding: 80px 32px;
-  text-align: center;
+  padding: 60px 32px;
   position: relative;
   overflow: hidden;
+  min-height: 520px;
 }
 
 .hero::before {
@@ -263,11 +263,21 @@ input, textarea, select {
   border-radius: 50%;
 }
 
-.hero__content {
+.hero__split {
   position: relative;
   z-index: 2;
-  max-width: 700px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1300px;
   margin: 0 auto;
+  gap: 40px;
+}
+
+.hero__content {
+  flex: 1;
+  max-width: 560px;
+  text-align: left;
 }
 
 .hero__badge {
@@ -286,13 +296,13 @@ input, textarea, select {
 }
 
 .hero h1 {
-  font-size: 48px;
+  font-size: clamp(32px, 4.5vw, 52px);
   font-weight: 900;
   color: white;
-  line-height: 1.1;
+  line-height: 1.08;
   margin-bottom: 16px;
   letter-spacing: -1px;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .hero h1 span {
@@ -309,8 +319,66 @@ input, textarea, select {
 .hero__buttons {
   display: flex;
   gap: 16px;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+/* Hero Products Grid */
+.hero__products {
+  flex: 1;
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.hero__product-item {
+  display: flex;
+  justify-content: center;
+}
+
+.hero__product-float {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  transition: background 0.3s, transform 0.3s;
+  cursor: default;
+  width: 100%;
+}
+
+.hero__product-float:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.35);
+}
+
+.hero__product-img {
+  width: 100%;
+  max-width: 140px;
+  height: 160px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.3));
+  transition: transform 0.4s ease;
+}
+
+.hero__product-float:hover .hero__product-img {
+  transform: scale(1.08);
+}
+
+.hero__product-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
 }
 
 .btn {
@@ -1228,15 +1296,50 @@ input, textarea, select {
   }
 
   .hero {
-    padding: 48px 20px;
+    padding: 40px 20px;
+    min-height: auto;
+  }
+
+  .hero__split {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .hero__content {
+    text-align: center;
+    max-width: 100%;
   }
 
   .hero h1 {
     font-size: 28px;
+    justify-content: center;
   }
 
   .hero__subtitle {
     font-size: 15px;
+  }
+
+  .hero__buttons {
+    justify-content: center;
+  }
+
+  .hero__products {
+    max-width: 100%;
+    gap: 12px;
+  }
+
+  .hero__product-float {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .hero__product-img {
+    max-width: 90px;
+    height: 110px;
+  }
+
+  .hero__product-name {
+    font-size: 10px;
   }
 
   .section {

@@ -6,6 +6,13 @@ import ProductCard from '../components/ProductCard';
 import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
 
+const heroProducts = [
+  { src: '/imagenes/brugal-doble-reserva.png', name: 'Brugal Doble Reserva', delay: 0 },
+  { src: '/imagenes/johnnie-walker-black.png', name: 'Johnnie Walker Black', delay: 0.15 },
+  { src: '/imagenes/cerveza-presidente.png', name: 'Cerveza Presidente', delay: 0.3 },
+  { src: '/imagenes/red-bull.png', name: 'Red Bull', delay: 0.45 },
+];
+
 interface HomeProps {
   getItemQty: (id: string) => number;
   onAdd: (product: Product) => void;
@@ -61,48 +68,89 @@ export default function Home({ getItemQty, onAdd, onUpdateQty }: HomeProps) {
     <main>
       {/* HERO BANNER */}
       <section className="hero">
-        <motion.div
-          className="hero__content"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-        >
+        <div className="hero__split">
           <motion.div
-            className="hero__badge"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            🚚 Delivery disponible
-          </motion.div>
-
-          <RevealText tag="h1" className="" delay={0.2} animateOnMount>
-            Todo lo que necesitas, directo a tu puerta
-          </RevealText>
-
-          <motion.p
-            className="hero__subtitle"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            Delivery y Pick-up disponible. Haz tu pedido por WhatsApp.
-          </motion.p>
-
-          <motion.div
-            className="hero__buttons"
-            initial={{ opacity: 0, y: 20 }}
+            className="hero__content"
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 }}
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
           >
-            <MagneticButton href="/catalogo" className="btn btn-white">
-              Ver Catalogo
-            </MagneticButton>
-            <MagneticButton href="https://wa.me/18095933919" className="btn btn-orange">
-              📱 WhatsApp
-            </MagneticButton>
+            <motion.div
+              className="hero__badge"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Delivery disponible
+            </motion.div>
+
+            <RevealText tag="h1" className="" delay={0.2} animateOnMount>
+              Todo lo que necesitas, directo a tu puerta
+            </RevealText>
+
+            <motion.p
+              className="hero__subtitle"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              Delivery y Pick-up disponible. Haz tu pedido por WhatsApp.
+            </motion.p>
+
+            <motion.div
+              className="hero__buttons"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+            >
+              <MagneticButton href="/catalogo" className="btn btn-white">
+                Ver Catalogo
+              </MagneticButton>
+              <MagneticButton href="https://wa.me/18095933919" className="btn btn-orange">
+                WhatsApp
+              </MagneticButton>
+            </motion.div>
           </motion.div>
-        </motion.div>
+
+          <div className="hero__products">
+            {heroProducts.map((item, i) => (
+              <motion.div
+                key={item.name}
+                className="hero__product-item"
+                initial={{ opacity: 0, y: 60, scale: 0.8 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                }}
+                transition={{
+                  delay: 0.5 + item.delay,
+                  duration: 0.8,
+                  ease: [0.76, 0, 0.24, 1] as [number, number, number, number],
+                }}
+              >
+                <motion.div
+                  className="hero__product-float"
+                  animate={{
+                    y: [0, i % 2 === 0 ? -12 : -8, 0],
+                  }}
+                  transition={{
+                    duration: 3 + i * 0.5,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <img
+                    src={item.src}
+                    alt={item.name}
+                    className="hero__product-img"
+                  />
+                  <span className="hero__product-name">{item.name}</span>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* CATEGORIAS */}
