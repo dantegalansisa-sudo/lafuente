@@ -7,9 +7,9 @@ import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
 
 const beverageProducts = [
-  { src: '/imagenes/brugal-doble-reserva.png', name: 'Brugal Doble Reserva' },
-  { src: '/imagenes/johnnie-walker-black.png', name: 'Johnnie Walker Black' },
-  { src: '/imagenes/cerveza-presidente.png', name: 'Cerveza Presidente' },
+  { src: '/imagenes/licores.png', name: 'Licores Premium' },
+  { src: '/imagenes/refrescos.png', name: 'Refrescos' },
+  { src: '/imagenes/cervezas.png', name: 'Cervezas' },
 ];
 
 interface HomeProps {
