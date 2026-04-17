@@ -403,7 +403,10 @@ input, textarea, select {
   max-width: 340px;
   height: 380px;
   object-fit: contain;
-  mix-blend-mode: multiply;
+  background: white;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   transition: transform 0.4s ease;
 }
 
