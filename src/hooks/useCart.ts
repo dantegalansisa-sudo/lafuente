@@ -46,6 +46,10 @@ export function useCart() {
     setItems([]);
   }, []);
 
+  const loadCart = useCallback((cartItems: CartItem[]) => {
+    setItems(cartItems);
+  }, []);
+
   const totalItems = items.reduce((sum, item) => sum + item.qty, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.price * item.qty, 0);
 
@@ -58,6 +62,7 @@ export function useCart() {
     updateQty,
     getItemQty,
     clearCart,
+    loadCart,
     totalItems,
     totalPrice,
   };

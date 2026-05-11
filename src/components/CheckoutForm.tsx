@@ -15,6 +15,13 @@ export default function CheckoutForm({ items, totalPrice, onOrderSent }: Checkou
   const [sector, setSector] = useState('');
   const [notes, setNotes] = useState('');
 
+  const buildCartLink = () => {
+    const baseUrl =
+      typeof window !== 'undefined' ? window.location.origin : 'https://lafuentesupermarket.com';
+    const cartParam = items.map(item => `${item.id}:${item.qty}`).join(',');
+    return `${baseUrl}/?cart=${encodeURIComponent(cartParam)}`;
+  };
+
   const buildWhatsAppMessage = () => {
     const line = `━━━━━━━━━━━━━━━━━━━━`;
     let msg = '';
@@ -54,6 +61,11 @@ export default function CheckoutForm({ items, totalPrice, onOrderSent }: Checkou
       msg += `\n${line}\n\n`;
       msg += `   *Notas:* ${notes}\n`;
     }
+
+    // Agent cart link
+    msg += `\n${line}\n\n`;
+    msg += `*Abrir pedido en la web:*\n`;
+    msg += `${buildCartLink()}\n`;
 
     // Footer
     msg += `\n${line}\n`;

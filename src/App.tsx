@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useCart } from './hooks/useCart';
 import { useSearch } from './hooks/useSearch';
+import { products } from './data/products';
+import type { CartItem } from './hooks/useCart';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import CartSidebar from './components/CartSidebar';
@@ -13,6 +16,31 @@ import AboutPage from './pages/AboutPage';
 function App() {
   const cart = useCart();
   const search = useSearch();
+
+  // Load cart from URL parameter (?cart=p0001:2,p0005:1)
+  // Used when supermarket agent clicks the link in a customer's WhatsApp message
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cartParam = params.get('cart');
+    if (!cartParam) return;
+
+    const loadedItems: CartItem[] = [];
+    cartParam.split(',').forEach(entry => {
+      const [id, qtyStr] = entry.split(':');
+      const qty = parseInt(qtyStr, 10);
+      if (!id || !qty || qty <= 0) return;
+      const product = products.find(p => p.id === id);
+      if (product) loadedItems.push({ ...product, qty });
+    });
+
+    if (loadedItems.length > 0) {
+      cart.loadCart(loadedItems);
+      cart.setIsOpen(true);
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BrowserRouter>
