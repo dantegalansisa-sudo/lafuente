@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { products, categories, categoryDisplayNames, getCategorySlug } from '../data/products';
+import { categories, categoryDisplayNames, getCategorySlug } from '../data/products';
 import type { Product } from '../data/products';
+import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/ProductCard';
 import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
@@ -71,6 +72,7 @@ const categoryImages: Record<string, string> = {
 };
 
 export default function Home({ getItemQty, onAdd, onUpdateQty }: HomeProps) {
+  const products = useProducts();
   const featured = products.slice(0, 12);
   const topCategories = categories.slice(0, 10);
 

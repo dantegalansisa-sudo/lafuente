@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { products, categoryDisplayNames } from '../data/products';
+import { categoryDisplayNames } from '../data/products';
 import type { Product } from '../data/products';
+import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/ProductCard';
 import CategoryFilter from '../components/CategoryFilter';
 
@@ -29,6 +30,7 @@ export default function CatalogPage({ getItemQty, onAdd, onUpdateQty }: CatalogP
   const searchQuery = searchParams.get('q') || '';
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const products = useProducts();
 
   const filtered = useMemo(() => {
     let result = products;
@@ -46,7 +48,7 @@ export default function CatalogPage({ getItemQty, onAdd, onUpdateQty }: CatalogP
     }
 
     return result;
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, products]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;

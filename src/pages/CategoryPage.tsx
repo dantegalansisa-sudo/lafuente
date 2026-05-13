@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { products, getCategoryFromSlug, categoryDisplayNames } from '../data/products';
+import { getCategoryFromSlug, categoryDisplayNames } from '../data/products';
 import type { Product } from '../data/products';
+import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/ProductCard';
 
 interface CategoryPageProps {
@@ -27,11 +28,12 @@ export default function CategoryPage({ getItemQty, onAdd, onUpdateQty }: Categor
   const { categoria } = useParams<{ categoria: string }>();
   const category = categoria ? getCategoryFromSlug(categoria) : undefined;
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const products = useProducts();
 
   const filtered = useMemo(() => {
     if (!category) return [];
     return products.filter(p => p.category === category);
-  }, [category]);
+  }, [category, products]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;

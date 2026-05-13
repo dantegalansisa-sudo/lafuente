@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
-import { products } from '../data/products';
 import type { Product } from '../data/products';
+import { useProducts } from './useProducts';
 
 export function useSearch() {
   const [query, setQuery] = useState('');
+  const products = useProducts();
 
   const results = useMemo((): Product[] => {
     if (!query.trim()) return [];
@@ -12,13 +13,13 @@ export function useSearch() {
       p.name.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, products]);
 
   const filterByCategory = useMemo(() => {
     return (category: string): Product[] => {
       return products.filter(p => p.category === category);
     };
-  }, []);
+  }, [products]);
 
   return {
     query,

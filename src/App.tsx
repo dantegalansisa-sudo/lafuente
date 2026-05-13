@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useCart } from './hooks/useCart';
 import { useSearch } from './hooks/useSearch';
-import { products } from './data/products';
+import { useProducts } from './hooks/useProducts';
 import type { CartItem } from './hooks/useCart';
 import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
@@ -12,10 +12,12 @@ import Home from './pages/Home';
 import CatalogPage from './pages/CatalogPage';
 import CategoryPage from './pages/CategoryPage';
 import AboutPage from './pages/AboutPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   const cart = useCart();
   const search = useSearch();
+  const products = useProducts();
 
   // Load cart from URL parameter (?cart=p0001:2,p0005:1)
   // Used when supermarket agent clicks the link in a customer's WhatsApp message
@@ -85,6 +87,7 @@ function App() {
           }
         />
         <Route path="/nosotros" element={<AboutPage />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
 
       <CartSidebar
