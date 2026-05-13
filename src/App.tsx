@@ -4,7 +4,6 @@ import { useCart } from './hooks/useCart';
 import { useSearch } from './hooks/useSearch';
 import { useProducts } from './hooks/useProducts';
 import type { CartItem } from './hooks/useCart';
-import CustomCursor from './components/CustomCursor';
 import Navbar from './components/Navbar';
 import CartSidebar from './components/CartSidebar';
 import WhatsAppButton from './components/WhatsAppButton';
@@ -46,8 +45,6 @@ function App() {
 
   return (
     <BrowserRouter>
-      <CustomCursor />
-
       <Navbar
         searchQuery={search.query}
         onSearchChange={search.setQuery}

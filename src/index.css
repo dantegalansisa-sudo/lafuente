@@ -1282,44 +1282,8 @@ input, textarea, select {
   color: white;
 }
 
-/* ===== CUSTOM CURSOR ===== */
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--red);
-  pointer-events: none;
-  z-index: 99999;
-}
-
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--red);
-  pointer-events: none;
-  z-index: 99998;
-  opacity: 0.5;
-  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease, background 0.3s ease;
-}
-
-.cursor--hover {
-  width: 56px !important;
-  height: 56px !important;
-  opacity: 1;
-  background: rgba(198,40,40,0.08);
-}
-
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .cursor-dot, .cursor-ring { display: none; }
-
   .navbar {
     padding: 0 16px;
     gap: 12px;
