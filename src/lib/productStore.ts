@@ -1,30 +1,31 @@
-// Product store abstraction.
-// Today: localStorage backend.
-// Tomorrow: swap the implementations for Supabase calls and the rest of the
-// app keeps working unchanged.
+// Product store backed by Supabase.
+// - Reads (overrides + custom products) are cached in memory and broadcast via
+//   `subscribe` so the rest of the app re-renders when the admin makes changes.
+// - Writes call Supabase directly and update the local cache on success.
+// - Image uploads currently embed the file as a data URL (works without R2).
+//   When R2 credentials are wired up, swap `uploadImage` to push to R2 and
+//   return the public URL — no other code change needed.
+
+import { supabase, isSupabaseConfigured } from './supabase';
 
 export interface ProductOverride {
   product_id: string;
-  price?: number;
-  image_url?: string;
-  hidden?: boolean;
+  price?: number | null;
+  image_url?: string | null;
+  hidden?: boolean | null;
   updated_at: string;
 }
 
 export interface CustomProduct {
   id: string;
-  sku: string;
+  sku: string | null;
   name: string;
   category: string;
   price: number;
-  image_url: string;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }
-
-const OVERRIDES_KEY = 'lafuente_product_overrides_v1';
-const CUSTOM_KEY = 'lafuente_custom_products_v1';
-const SESSION_KEY = 'lafuente_admin_session_v1';
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
@@ -35,104 +36,206 @@ export function subscribe(fn: Listener): () => void {
   return () => listeners.delete(fn);
 }
 
-function readJSON<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return fallback;
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
+// In-memory cache
+let overridesCache: ProductOverride[] = [];
+let customCache: CustomProduct[] = [];
+let initialFetchStarted = false;
+let initialFetchDone = false;
+
+async function fetchAll() {
+  if (!isSupabaseConfigured) return;
+  const [ovRes, cpRes] = await Promise.all([
+    supabase.from('product_overrides').select('*'),
+    supabase.from('custom_products').select('*'),
+  ]);
+  if (ovRes.error) {
+    console.error('Failed to load overrides:', ovRes.error);
+  } else {
+    overridesCache = (ovRes.data ?? []) as ProductOverride[];
   }
+  if (cpRes.error) {
+    console.error('Failed to load custom products:', cpRes.error);
+  } else {
+    customCache = (cpRes.data ?? []) as CustomProduct[];
+  }
+  initialFetchDone = true;
+  notify();
 }
 
-function writeJSON(key: string, value: unknown) {
-  localStorage.setItem(key, JSON.stringify(value));
+export function ensureLoaded() {
+  if (initialFetchStarted) return;
+  initialFetchStarted = true;
+  void fetchAll();
+}
+
+// Realtime subscription so multiple devices stay in sync without a refresh.
+if (isSupabaseConfigured && typeof window !== 'undefined') {
+  supabase
+    .channel('admin-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'product_overrides' }, () => {
+      void fetchAll();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'custom_products' }, () => {
+      void fetchAll();
+    })
+    .subscribe();
 }
 
 // Overrides
 export function getOverrides(): ProductOverride[] {
-  return readJSON<ProductOverride[]>(OVERRIDES_KEY, []);
+  return overridesCache;
 }
 
 export function getOverride(productId: string): ProductOverride | undefined {
-  return getOverrides().find(o => o.product_id === productId);
+  return overridesCache.find(o => o.product_id === productId);
 }
 
-export function setOverride(productId: string, patch: Partial<Omit<ProductOverride, 'product_id' | 'updated_at'>>) {
-  const all = getOverrides();
-  const idx = all.findIndex(o => o.product_id === productId);
-  const now = new Date().toISOString();
-  if (idx >= 0) {
-    all[idx] = { ...all[idx], ...patch, updated_at: now };
-  } else {
-    all.push({ product_id: productId, ...patch, updated_at: now });
-  }
-  writeJSON(OVERRIDES_KEY, all);
+export async function setOverride(
+  productId: string,
+  patch: Partial<Omit<ProductOverride, 'product_id' | 'updated_at'>>,
+) {
+  const row = { product_id: productId, ...patch };
+  const { error, data } = await supabase
+    .from('product_overrides')
+    .upsert(row, { onConflict: 'product_id' })
+    .select()
+    .single();
+  if (error) throw error;
+  const idx = overridesCache.findIndex(o => o.product_id === productId);
+  if (idx >= 0) overridesCache[idx] = data as ProductOverride;
+  else overridesCache.push(data as ProductOverride);
   notify();
 }
 
-export function deleteOverride(productId: string) {
-  const all = getOverrides().filter(o => o.product_id !== productId);
-  writeJSON(OVERRIDES_KEY, all);
+export async function deleteOverride(productId: string) {
+  const { error } = await supabase
+    .from('product_overrides')
+    .delete()
+    .eq('product_id', productId);
+  if (error) throw error;
+  overridesCache = overridesCache.filter(o => o.product_id !== productId);
   notify();
 }
 
 // Custom products
 export function getCustomProducts(): CustomProduct[] {
-  return readJSON<CustomProduct[]>(CUSTOM_KEY, []);
+  return customCache;
 }
 
-export function createCustomProduct(input: Omit<CustomProduct, 'id' | 'created_at' | 'updated_at'>): CustomProduct {
-  const now = new Date().toISOString();
-  const id = `cp_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
-  const product: CustomProduct = { id, ...input, created_at: now, updated_at: now };
-  const all = getCustomProducts();
-  all.push(product);
-  writeJSON(CUSTOM_KEY, all);
+export async function createCustomProduct(
+  input: Omit<CustomProduct, 'id' | 'created_at' | 'updated_at'>,
+): Promise<CustomProduct> {
+  const { error, data } = await supabase
+    .from('custom_products')
+    .insert(input)
+    .select()
+    .single();
+  if (error) throw error;
+  const created = data as CustomProduct;
+  customCache.push(created);
   notify();
-  return product;
+  return created;
 }
 
-export function updateCustomProduct(id: string, patch: Partial<Omit<CustomProduct, 'id' | 'created_at'>>) {
-  const all = getCustomProducts();
-  const idx = all.findIndex(p => p.id === id);
-  if (idx < 0) return;
-  all[idx] = { ...all[idx], ...patch, updated_at: new Date().toISOString() };
-  writeJSON(CUSTOM_KEY, all);
+export async function updateCustomProduct(
+  id: string,
+  patch: Partial<Omit<CustomProduct, 'id' | 'created_at'>>,
+) {
+  const { error, data } = await supabase
+    .from('custom_products')
+    .update(patch)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  const idx = customCache.findIndex(p => p.id === id);
+  if (idx >= 0) customCache[idx] = data as CustomProduct;
   notify();
 }
 
-export function deleteCustomProduct(id: string) {
-  const all = getCustomProducts().filter(p => p.id !== id);
-  writeJSON(CUSTOM_KEY, all);
+export async function deleteCustomProduct(id: string) {
+  const { error } = await supabase.from('custom_products').delete().eq('id', id);
+  if (error) throw error;
+  customCache = customCache.filter(p => p.id !== id);
   notify();
 }
 
-// File upload (today: data URL into localStorage; tomorrow: Supabase Storage URL)
+// Image upload — until R2 is configured, embed as data URL so the panel is
+// fully usable end-to-end. Swap this implementation for an R2 PUT later.
 export async function uploadImage(file: File): Promise<string> {
+  // Light client-side compression so data URLs don't blow up the row size.
+  const compressed = await compressImage(file, { maxDim: 1024, quality: 0.8 });
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressed);
   });
 }
 
-// Auth (today: hardcoded password; tomorrow: Supabase Auth)
-const ADMIN_PASSWORD = 'lafuente2026';
-
-export function adminLogin(password: string): boolean {
-  if (password === ADMIN_PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    return true;
-  }
-  return false;
+async function compressImage(
+  file: File,
+  { maxDim, quality }: { maxDim: number; quality: number },
+): Promise<Blob> {
+  if (!file.type.startsWith('image/')) return file;
+  const img = await loadImage(file);
+  const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+  const w = Math.round(img.width * scale);
+  const h = Math.round(img.height * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return file;
+  ctx.drawImage(img, 0, 0, w, h);
+  return new Promise<Blob>(resolve => {
+    canvas.toBlob(
+      blob => resolve(blob ?? file),
+      'image/jpeg',
+      quality,
+    );
+  });
 }
 
-export function adminLogout() {
-  sessionStorage.removeItem(SESSION_KEY);
+function loadImage(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = e => { URL.revokeObjectURL(url); reject(e); };
+    img.src = url;
+  });
 }
 
-export function isAdminAuthed(): boolean {
-  return sessionStorage.getItem(SESSION_KEY) === '1';
+// Auth — Supabase email/password
+export interface AuthUser {
+  id: string;
+  email: string | null;
 }
+
+export async function adminLogin(email: string, password: string): Promise<AuthUser> {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  if (!data.user) throw new Error('No user returned');
+  return { id: data.user.id, email: data.user.email ?? null };
+}
+
+export async function adminLogout() {
+  await supabase.auth.signOut();
+}
+
+export async function getCurrentUser(): Promise<AuthUser | null> {
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return null;
+  return { id: data.user.id, email: data.user.email ?? null };
+}
+
+export function onAuthChange(cb: (user: AuthUser | null) => void) {
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!session?.user) cb(null);
+    else cb({ id: session.user.id, email: session.user.email ?? null });
+  });
+  return () => data.subscription.unsubscribe();
+}
+
+export const initialDataReady = () => initialFetchDone;

@@ -5,6 +5,7 @@ import {
   subscribe,
   getOverrides,
   getCustomProducts,
+  ensureLoaded,
 } from '../lib/productStore';
 
 // Merges the static products list with admin overrides and custom products.
@@ -13,6 +14,7 @@ export function useProducts(): Product[] {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    ensureLoaded();
     const unsub = subscribe(() => setTick(t => t + 1));
     return unsub;
   }, []);
@@ -39,11 +41,11 @@ export function useProducts(): Product[] {
     for (const cp of getCustomProducts()) {
       merged.push({
         id: cp.id,
-        sku: cp.sku,
+        sku: cp.sku ?? '',
         name: cp.name,
         category: cp.category,
         price: cp.price,
-        image: cp.image_url,
+        image: cp.image_url ?? '/logo-lafuente.jpeg',
       });
     }
 

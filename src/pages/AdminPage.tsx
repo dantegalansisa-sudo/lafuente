@@ -6,7 +6,8 @@ import { useProducts } from '../hooks/useProducts';
 import {
   adminLogin,
   adminLogout,
-  isAdminAuthed,
+  getCurrentUser,
+  onAuthChange,
   setOverride,
   deleteOverride,
   getOverride,
@@ -15,33 +16,59 @@ import {
   deleteCustomProduct,
   uploadImage,
 } from '../lib/productStore';
+import type { AuthUser } from '../lib/productStore';
 
 const ITEMS_PER_PAGE = 25;
 
-export default function AdminPage() {
-  const [authed, setAuthed] = useState(() => isAdminAuthed());
+// Static catalog ids look like `p0001`; admin-created products use Supabase
+// UUIDs (e.g. `550e8400-e29b-41d4-a716-446655440000`), which contain hyphens.
+const isCustomId = (id: string) => id.includes('-');
 
-  if (!authed) {
-    return <LoginScreen onSuccess={() => setAuthed(true)} />;
+export default function AdminPage() {
+  const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
+
+  useEffect(() => {
+    getCurrentUser().then(setUser);
+    return onAuthChange(setUser);
+  }, []);
+
+  if (user === undefined) {
+    return <main className="admin admin--loading">Cargando...</main>;
   }
 
-  return <Dashboard onLogout={() => { adminLogout(); setAuthed(false); }} />;
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  return <Dashboard user={user} onLogout={async () => { await adminLogout(); }} />;
 }
 
 // ============================================================
 // Login
 // ============================================================
-function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
+function LoginScreen() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminLogin(password)) {
-      onSuccess();
-    } else {
-      setError('Contraseña incorrecta');
+    setLoading(true);
+    setError('');
+    try {
+      await adminLogin(email.trim(), password);
+      // onAuthChange will update the parent state
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error al iniciar sesión';
+      setError(
+        msg.toLowerCase().includes('invalid')
+          ? 'Email o contraseña incorrectos'
+          : msg,
+      );
       setPassword('');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,14 +79,24 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
         <h1>Panel de Administración</h1>
         <p>Acceso solo para personal autorizado</p>
         <input
+          type="email"
+          value={email}
+          onChange={e => { setEmail(e.target.value); setError(''); }}
+          placeholder="Email"
+          autoFocus
+          required
+        />
+        <input
           type="password"
           value={password}
           onChange={e => { setPassword(e.target.value); setError(''); }}
           placeholder="Contraseña"
-          autoFocus
+          required
         />
         {error && <span className="admin-login__error">{error}</span>}
-        <button type="submit">Entrar</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Entrando...' : 'Entrar'}
+        </button>
         <Link to="/" className="admin-login__back">← Volver al sitio</Link>
       </form>
     </main>
@@ -69,7 +106,7 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
 // ============================================================
 // Dashboard (product manager)
 // ============================================================
-function Dashboard({ onLogout }: { onLogout: () => void }) {
+function Dashboard({ user, onLogout }: { user: AuthUser; onLogout: () => void }) {
   const products = useProducts();
   const [query, setQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
@@ -105,7 +142,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           <img src="/logo-lafuente.jpeg" alt="La Fuente" />
           <div>
             <h1>Panel de Administración</h1>
-            <p>{filtered.length.toLocaleString()} productos</p>
+            <p>
+              {filtered.length.toLocaleString()} productos
+              {user.email && <span className="admin__user"> · {user.email}</span>}
+            </p>
           </div>
         </div>
         <div className="admin__header-right">
@@ -178,23 +218,35 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 // Product row
 // ============================================================
 function ProductRow({ product, onEdit }: { product: Product; onEdit: () => void }) {
-  const isCustom = product.id.startsWith('cp_');
+  const isCustom = isCustomId(product.id);
   const override = !isCustom ? getOverride(product.id) : undefined;
   const edited = isCustom || !!override;
+  const [busy, setBusy] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!confirm(`¿Eliminar "${product.name}"?`)) return;
-    if (isCustom) {
-      deleteCustomProduct(product.id);
-    } else {
-      setOverride(product.id, { hidden: true });
+    setBusy(true);
+    try {
+      if (isCustom) await deleteCustomProduct(product.id);
+      else await setOverride(product.id, { hidden: true });
+    } catch (err) {
+      alert(`Error al eliminar: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setBusy(false);
     }
   };
 
-  const handleRestore = () => {
+  const handleRestore = async () => {
     if (isCustom) return;
     if (!confirm(`¿Restaurar "${product.name}" a su valor original?`)) return;
-    deleteOverride(product.id);
+    setBusy(true);
+    try {
+      await deleteOverride(product.id);
+    } catch (err) {
+      alert(`Error al restaurar: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -212,14 +264,15 @@ function ProductRow({ product, onEdit }: { product: Product; onEdit: () => void 
         RD${product.price.toFixed(2)}
       </div>
       <div className="admin__cell admin__cell--actions">
-        <button className="admin__icon-btn" onClick={onEdit} title="Editar">Editar</button>
+        <button className="admin__icon-btn" onClick={onEdit} title="Editar" disabled={busy}>Editar</button>
         {edited && !isCustom && (
-          <button className="admin__icon-btn" onClick={handleRestore} title="Restaurar original">↺</button>
+          <button className="admin__icon-btn" onClick={handleRestore} title="Restaurar original" disabled={busy}>↺</button>
         )}
         <button
           className="admin__icon-btn admin__icon-btn--danger"
           onClick={handleDelete}
           title="Eliminar"
+          disabled={busy}
         >
           Eliminar
         </button>
@@ -232,7 +285,7 @@ function ProductRow({ product, onEdit }: { product: Product; onEdit: () => void 
 // Edit modal
 // ============================================================
 function EditModal({ product, onClose }: { product: Product; onClose: () => void }) {
-  const isCustom = product.id.startsWith('cp_');
+  const isCustom = isCustomId(product.id);
   const [price, setPrice] = useState(product.price.toString());
   const [imagePreview, setImagePreview] = useState(product.image);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
@@ -242,34 +295,42 @@ function EditModal({ product, onClose }: { product: Product; onClose: () => void
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = await uploadImage(file);
-    setImageDataUrl(url);
-    setImagePreview(url);
+    try {
+      const url = await uploadImage(file);
+      setImageDataUrl(url);
+      setImagePreview(url);
+    } catch (err) {
+      alert(`Error al cargar imagen: ${err instanceof Error ? err.message : String(err)}`);
+    }
   };
 
   const handleSave = async () => {
-    setSaving(true);
     const newPrice = parseFloat(price);
     if (isNaN(newPrice) || newPrice < 0) {
       alert('Precio inválido');
-      setSaving(false);
       return;
     }
 
-    if (isCustom) {
-      updateCustomProduct(product.id, {
-        price: newPrice,
-        name,
-        ...(imageDataUrl ? { image_url: imageDataUrl } : {}),
-      });
-    } else {
-      setOverride(product.id, {
-        price: newPrice,
-        ...(imageDataUrl ? { image_url: imageDataUrl } : {}),
-      });
+    setSaving(true);
+    try {
+      if (isCustom) {
+        await updateCustomProduct(product.id, {
+          price: newPrice,
+          name,
+          ...(imageDataUrl ? { image_url: imageDataUrl } : {}),
+        });
+      } else {
+        await setOverride(product.id, {
+          price: newPrice,
+          ...(imageDataUrl ? { image_url: imageDataUrl } : {}),
+        });
+      }
+      onClose();
+    } catch (err) {
+      alert(`Error al guardar: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    onClose();
   };
 
   return (
@@ -353,9 +414,13 @@ function CreateModal({ onClose }: { onClose: () => void }) {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const url = await uploadImage(file);
-    setImageDataUrl(url);
-    setImagePreview(url);
+    try {
+      const url = await uploadImage(file);
+      setImageDataUrl(url);
+      setImagePreview(url);
+    } catch (err) {
+      alert(`Error al cargar imagen: ${err instanceof Error ? err.message : String(err)}`);
+    }
   };
 
   const handleSave = async () => {
@@ -364,15 +429,20 @@ function CreateModal({ onClose }: { onClose: () => void }) {
     if (isNaN(newPrice) || newPrice < 0) { alert('Precio inválido'); return; }
 
     setSaving(true);
-    createCustomProduct({
-      sku: sku.trim(),
-      name: name.trim(),
-      category,
-      price: newPrice,
-      image_url: imageDataUrl,
-    });
-    setSaving(false);
-    onClose();
+    try {
+      await createCustomProduct({
+        sku: sku.trim() || null,
+        name: name.trim(),
+        category,
+        price: newPrice,
+        image_url: imageDataUrl,
+      });
+      onClose();
+    } catch (err) {
+      alert(`Error al crear: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
