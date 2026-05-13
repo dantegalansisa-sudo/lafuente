@@ -1,14 +1,108 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-DO">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Core SEO -->
+    <title>La Fuente Supermarket — Delivery y Pick-up en Villa Mella, Santo Domingo</title>
+    <meta
+      name="description"
+      content="Supermercado, licorera y tienda del hogar en Villa Mella. Haz tu pedido por WhatsApp con delivery o pick-up. Despensa, bebidas, embutidos, lácteos, panadería y más."
+    />
+    <meta
+      name="keywords"
+      content="supermercado Villa Mella, delivery supermercado Santo Domingo, licorera Villa Mella, supermercado Republica Dominicana, La Fuente Supermarket, pedido WhatsApp supermercado"
+    />
+    <meta name="author" content="La Fuente Supermarket" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://lafuentemarket.vercel.app/" />
+
+    <!-- Geo -->
+    <meta name="geo.region" content="DO-01" />
+    <meta name="geo.placename" content="Villa Mella, Santo Domingo" />
+    <meta name="ICBM" content="18.5604, -69.9248" />
+
+    <!-- Open Graph (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="La Fuente Supermarket" />
+    <meta property="og:locale" content="es_DO" />
+    <meta property="og:url" content="https://lafuentemarket.vercel.app/" />
+    <meta property="og:title" content="La Fuente Supermarket — Delivery por WhatsApp" />
+    <meta
+      property="og:description"
+      content="Tu supermercado de confianza en Villa Mella. Haz tu pedido por WhatsApp con delivery o pick-up."
+    />
+    <meta property="og:image" content="https://lafuentemarket.vercel.app/logo-lafuente.jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="La Fuente Supermarket" />
+    <meta
+      name="twitter:description"
+      content="Supermercado en Villa Mella con delivery por WhatsApp."
+    />
+    <meta name="twitter:image" content="https://lafuentemarket.vercel.app/logo-lafuente.jpeg" />
+
+    <!-- Theme color (mobile browser chrome) -->
+    <meta name="theme-color" content="#c8102e" />
+
+    <!-- Google Search Console verification — replace the placeholder with the
+         meta tag Google gives you when you add the property. -->
+    <!-- <meta name="google-site-verification" content="REPLACE_WITH_GSC_CODE" /> -->
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/logo-lafuente.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <title>La Fuente Supermarket</title>
-    <meta name="description" content="Tu supermercado de confianza. Delivery y Pick-up disponible. Haz tu pedido por WhatsApp." />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Structured data: LocalBusiness / Grocery store -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "GroceryStore",
+      "name": "La Fuente Supermarket",
+      "image": "https://lafuentemarket.vercel.app/logo-lafuente.jpeg",
+      "url": "https://lafuentemarket.vercel.app/",
+      "telephone": "+1-809-593-3919",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Carretera Yamasa, local 26, al lado de Stop Out Car Wash",
+        "addressLocality": "Villa Mella",
+        "addressRegion": "Santo Domingo",
+        "postalCode": "11201",
+        "addressCountry": "DO"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 18.5604,
+        "longitude": -69.9248
+      },
+      "sameAs": [
+        "https://instagram.com/lafuentesupermarketrd"
+      ],
+      "potentialAction": {
+        "@type": "OrderAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://wa.me/18095933919",
+          "actionPlatform": ["http://schema.org/DesktopWebPlatform", "http://schema.org/MobileWebPlatform"]
+        },
+        "deliveryMethod": ["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet", "http://purl.org/goodrelations/v1#DeliveryModePickUp"]
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

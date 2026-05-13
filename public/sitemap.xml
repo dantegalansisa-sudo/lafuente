@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core pages -->
+  <url>
+    <loc>https://lafuentemarket.vercel.app/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://lafuentemarket.vercel.app/catalogo</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lafuentemarket.vercel.app/nosotros</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Category pages -->
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/despensas-alimentos-y-mas</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/pasta-cafe-cereales</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/galletas-panaderia</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/quincalleria</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/liqor-stor-don-chucho</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/area-de-bebes</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/cuidado-personal-y-belleza</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/electrodomesticos-hogar</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/embutidos</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/farmacia</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/ferreteria</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/frescos-y-peresederos</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/frutos-secos</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/granero</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/lacteos</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/lacteos-y-huevos</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/limpieza-y-desechables</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/mercado</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/panaderia</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/productos-variados</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/tecnologia</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/bebidas-refrescantes</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/combo</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://lafuentemarket.vercel.app/catalogo/veterinaria</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+</urlset>

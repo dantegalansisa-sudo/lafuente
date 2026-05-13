@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { categoryDisplayNames } from '../data/products';
 import type { Product } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import ProductCard from '../components/ProductCard';
 import CategoryFilter from '../components/CategoryFilter';
 
@@ -31,6 +32,14 @@ export default function CatalogPage({ getItemQty, onAdd, onUpdateQty }: CatalogP
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const products = useProducts();
+
+  useDocumentTitle(
+    searchQuery
+      ? `Resultados: "${searchQuery}"`
+      : selectedCategory
+      ? (categoryDisplayNames[selectedCategory] || selectedCategory)
+      : 'Catálogo completo',
+  );
 
   const filtered = useMemo(() => {
     let result = products;

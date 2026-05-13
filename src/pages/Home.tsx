@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { categories, categoryDisplayNames, getCategorySlug } from '../data/products';
 import type { Product } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import ProductCard from '../components/ProductCard';
 import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
@@ -72,6 +73,7 @@ const categoryImages: Record<string, string> = {
 };
 
 export default function Home({ getItemQty, onAdd, onUpdateQty }: HomeProps) {
+  useDocumentTitle('La Fuente Supermarket — Delivery y Pick-up en Villa Mella');
   const products = useProducts();
   const featured = products.slice(0, 12);
   const topCategories = categories.slice(0, 10);

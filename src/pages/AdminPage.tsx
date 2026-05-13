@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { categories, categoryDisplayNames } from '../data/products';
 import type { Product } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import {
   adminLogin,
   adminLogout,
@@ -26,6 +27,8 @@ const isCustomId = (id: string) => id.includes('-');
 
 export default function AdminPage() {
   const [user, setUser] = useState<AuthUser | null | undefined>(undefined);
+
+  useDocumentTitle('Panel de Administración');
 
   useEffect(() => {
     getCurrentUser().then(setUser);

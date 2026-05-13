@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import RevealText from '../components/RevealText';
 import MagneticButton from '../components/MagneticButton';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const departments = [
   { name: 'Despensa y Alimentos', description: 'Productos basicos, aceites, conservas y todo para la cocina' },
@@ -40,6 +41,7 @@ const itemVariants = {
 };
 
 export default function AboutPage() {
+  useDocumentTitle('Nosotros');
   return (
     <main className="about-page">
       {/* HERO */}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { getCategoryFromSlug, categoryDisplayNames } from '../data/products';
 import type { Product } from '../data/products';
 import { useProducts } from '../hooks/useProducts';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import ProductCard from '../components/ProductCard';
 
 interface CategoryPageProps {
@@ -29,6 +30,10 @@ export default function CategoryPage({ getItemQty, onAdd, onUpdateQty }: Categor
   const category = categoria ? getCategoryFromSlug(categoria) : undefined;
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const products = useProducts();
+
+  useDocumentTitle(
+    category ? (categoryDisplayNames[category] || category) : 'Categoría',
+  );
 
   const filtered = useMemo(() => {
     if (!category) return [];

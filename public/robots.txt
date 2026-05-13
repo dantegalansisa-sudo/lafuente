@@ -1,0 +1,9 @@
+# La Fuente Supermarket
+# Public site is fully crawlable; admin panel and API are not.
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://lafuentemarket.vercel.app/sitemap.xml
