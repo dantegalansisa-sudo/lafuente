@@ -160,16 +160,59 @@ export async function deleteCustomProduct(id: string) {
   notify();
 }
 
-// Image upload — until R2 is configured, embed as data URL so the panel is
-// fully usable end-to-end. Swap this implementation for an R2 PUT later.
-export async function uploadImage(file: File): Promise<string> {
-  // Light client-side compression so data URLs don't blow up the row size.
-  const compressed = await compressImage(file, { maxDim: 1024, quality: 0.8 });
+// Image upload — pushes the compressed file to Cloudflare R2 via the
+// /api/upload-image Vercel function. If the function is unreachable (e.g.
+// `vite dev` without `vercel dev`), falls back to embedding as a data URL so
+// the panel remains usable for local testing.
+export async function uploadImage(file: File, productId?: string): Promise<string> {
+  const compressed = await compressImage(file, { maxDim: 1024, quality: 0.82 });
+  const base64 = await blobToBase64(compressed);
+
+  try {
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) throw new Error('No active session');
+
+    const res = await fetch('/api/upload-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        filename: file.name,
+        contentType: compressed.type || 'image/jpeg',
+        base64,
+        productId,
+      }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Upload failed (${res.status}): ${text.slice(0, 200)}`);
+    }
+    const json = (await res.json()) as { url: string };
+    return json.url;
+  } catch (err) {
+    console.warn(
+      'R2 upload unavailable, falling back to data URL:',
+      err instanceof Error ? err.message : err,
+    );
+    return `data:${compressed.type || 'image/jpeg'};base64,${base64}`;
+  }
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
+    reader.onload = () => {
+      const result = reader.result as string;
+      // strip the `data:<type>;base64,` prefix
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
     reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(compressed);
+    reader.readAsDataURL(blob);
   });
 }
 
