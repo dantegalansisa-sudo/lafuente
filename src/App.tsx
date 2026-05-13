@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useCart } from './hooks/useCart';
 import { useSearch } from './hooks/useSearch';
 import { useProducts } from './hooks/useProducts';
@@ -14,12 +14,26 @@ import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
 
 function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
+  );
+}
+
+// The shell decides what chrome to render based on the current route.
+// /admin and anything under /admin/* runs in isolation — no public navbar,
+// no cart sidebar, no floating WhatsApp button.
+function AppShell() {
   const cart = useCart();
   const search = useSearch();
   const products = useProducts();
+  const location = useLocation();
 
-  // Load cart from URL parameter (?cart=p0001:2,p0005:1)
-  // Used when supermarket agent clicks the link in a customer's WhatsApp message
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  // Load cart from URL parameter (?cart=p0001:2,p0005:1) — used when the
+  // supermarket agent clicks the link in a customer's WhatsApp message.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const cartParam = params.get('cart');
@@ -44,13 +58,15 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
-      <Navbar
-        searchQuery={search.query}
-        onSearchChange={search.setQuery}
-        totalItems={cart.totalItems}
-        onCartClick={() => cart.setIsOpen(true)}
-      />
+    <>
+      {!isAdminRoute && (
+        <Navbar
+          searchQuery={search.query}
+          onSearchChange={search.setQuery}
+          totalItems={cart.totalItems}
+          onCartClick={() => cart.setIsOpen(true)}
+        />
+      )}
 
       <Routes>
         <Route
@@ -87,18 +103,20 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
       </Routes>
 
-      <CartSidebar
-        isOpen={cart.isOpen}
-        onClose={() => cart.setIsOpen(false)}
-        items={cart.items}
-        totalPrice={cart.totalPrice}
-        onUpdateQty={cart.updateQty}
-        onRemove={cart.removeItem}
-        onClear={cart.clearCart}
-      />
+      {!isAdminRoute && (
+        <CartSidebar
+          isOpen={cart.isOpen}
+          onClose={() => cart.setIsOpen(false)}
+          items={cart.items}
+          totalPrice={cart.totalPrice}
+          onUpdateQty={cart.updateQty}
+          onRemove={cart.removeItem}
+          onClear={cart.clearCart}
+        />
+      )}
 
-      <WhatsAppButton />
-    </BrowserRouter>
+      {!isAdminRoute && <WhatsAppButton />}
+    </>
   );
 }
 
