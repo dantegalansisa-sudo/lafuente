@@ -54,7 +54,8 @@ export default function CheckoutForm({ items, totalPrice, onOrderSent }: Checkou
 
     // Total
     msg += `${line}\n\n`;
-    msg += `   *TOTAL: RD$${totalPrice.toFixed(2)}*\n`;
+    msg += `   *TOTAL ESTIMADO: RD$${totalPrice.toFixed(2)}*\n`;
+    msg += `   _Precios sujetos a confirmacion por el agente de venta._\n`;
 
     // Notes
     if (notes) {
